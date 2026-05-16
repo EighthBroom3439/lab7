@@ -59,3 +59,44 @@ vdeo@deo:~/EighthBroom3439/workspace/projects/lab04$ cat > .github/workflows/ci.
 >       run: cmake --build _build --target install
 > EOF
 ```
+
+## 3. Содержимое папки lab04 было запушено в этот репозиторий (Также был исправлен файл print.hpp, чтобы компиляция на сайте происходила без ошибок)
+```bash
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab04$ git add .
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab04$ git commit
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab04$ git push origin master:main
+Username for 'https://github.com': EighthBroom3439
+Password for 'https://EighthBroom3439@github.com': 
+        
+Перечисление объектов: 4, готово.
+Подсчет объектов: 100% (4/4), готово.
+При сжатии изменений используется до 2 потоков
+Сжатие объектов: 100% (2/2), готово.
+Запись объектов: 100% (2/2), 323 байта | 323.00 КиБ/с, готово.
+Total 2 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/EighthBroom3439/lab04.git
+   7b140c3..a6e0271  master -> main
+```
+
+```bash
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab04/include$ nano print.hpp 
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab04$ git add include/print.hpp
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab04$ git commit -m "fix print.hpp"
+[master 04b95fa] fix print.hpp
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab04$ git push origin master:main
+Username for 'https://github.com': EighthBroom3439
+Password for 'https://EighthBroom3439@github.com': 
+Перечисление объектов: 7, готово.
+Подсчет объектов: 100% (7/7), готово.
+При сжатии изменений используется до 2 потоков
+Сжатие объектов: 100% (3/3), готово.
+Запись объектов: 100% (4/4), 342 байта | 342.00 КиБ/с, готово.
+Total 4 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/EighthBroom3439/lab04.git
+   a6e0271..04b95fa  master -> main
+```
+
+## 4. В начало отчета был добавлен бейдж
