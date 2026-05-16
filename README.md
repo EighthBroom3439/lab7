@@ -100,3 +100,4 @@ To https://github.com/EighthBroom3439/lab04.git
 ```
 
 ## 4. В начало отчета был добавлен бейдж
+<img width="886" height="598" alt="image" src="https://github.com/user-attachments/assets/ffc75184-d4c7-4033-9de7-b5c15b3aa68b" />
