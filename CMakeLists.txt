@@ -51,4 +51,4 @@ if(BUILD_TESTS)
   add_test(NAME check COMMAND check)
 endif()
 
-icnlude(CPackConfig.cmake)
+include(CPackConfig.cmake)
