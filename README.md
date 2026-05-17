@@ -1,108 +1,102 @@
-[![CMake CI](https://github.com/EighthBroom3439/lab5/actions/workflows/ci.yml/badge.svg)](https://github.com/EighthBroom3439/lab5/actions/workflows/ci.yml)
-# Laboratory work V
+[![CMake CI](https://github.com/EighthBroom3439/lab6/actions/workflows/ci.yml/badge.svg)](https://github.com/EighthBroom3439/lab6/actions/workflows/ci.yml)
+# Laboratory work VI
 
-Цель данной лабораторной работы заключалась в том, чтобы ознакомиться с фреймворками для тестирования на примере GTest.
+Цель данной лабораторной работы заключалась в том, чтобы ознакомиться с средствами пакетирования на примере CPack.
 B данной работе было выполнено следующее:
 
 ## 1. Был скопирован репозиторий из предыдущей лабораторной работы
 ```bash
 vdeo@deo:~$ export GITHUB_USERNAME=EighthBroom3439
-vdeo@deo:~$ cd ${GITHUB_USERNAME}/workspace/
-vdeo@deo:~/EighthBroom3439/workspace$ git clone https://github.com/${GITHUB_USERNAME}/lab04 projects/lab05
-Клонирование в «projects/lab05»...
-remote: Enumerating objects: 94, done.
-remote: Counting objects: 100% (94/94), done.
+vdeo@deo:~$ git clone https://github.com/${GITHUB_USERNAME}/lab5 ${GITHUB_USERNAME}/workspace/projects/lab06
+Клонирование в «EighthBroom3439/workspace/projects/lab06»...
+remote: Enumerating objects: 108, done.
+remote: Counting objects: 100% (108/108), done.
 remote: Compressing objects: 100% (54/54), done.
-remote: Total 94 (delta 33), reused 84 (delta 28), pack-reused 0 (from 0)
-Получение объектов: 100% (94/94), 28.99 КиБ | 4.83 МиБ/с, готово.
-Определение изменений: 100% (33/33), готово.
-vdeo@deo:~/EighthBroom3439/workspace$ cd projects/lab05
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ git remote remove origin
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ git remote add origin https://git
+remote: Total 108 (delta 37), reused 108 (delta 37), pack-reused 0 (from 0)
+Получение объектов: 100% (108/108), 33.19 КиБ | 755.00 КиБ/с, готово.
+Определение изменений: 100% (37/37), готово.
+vdeo@deo:~$ cd ${GITHUB_USERNAME}/workspace/projects/lab06
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ git remote remove origin
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ git remote add origin https://github.com/${GITHUB_USERNAME}/lab6
 ```
 
-## 2. Была установлена последняя доступная версия gtest
+## 2. Были внесены изменения в CMakeLists.txt
 ```bash
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ git submodule add https://github.com/google/googletest third-party/gtest
-Клонирование в «/home/vdeo/EighthBroom3439/workspace/projects/lab05/third-party/gtest»...
-remote: Enumerating objects: 28637, done.
-remote: Counting objects: 100% (71/71), done.
-remote: Compressing objects: 100% (51/51), done.
-remote: Total 28637 (delta 36), reused 21 (delta 19), pack-reused 28566 (from 2)
-Получение объектов: 100% (28637/28637), 13.75 МиБ | 6.59 МиБ/с, готово.
-Определение изменений: 100% (21277/21277), готово.
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05/third-party/gtest$ git checkout v1.15.2
-Примечание: переключение на «v1.15.2».
+cmake_minimum_required(VERSION 3.4)
 
-Вы сейчас в состоянии «отсоединённого указателя HEAD». Можете осмотреться,
-внести экспериментальные изменения и зафиксировать их, также можете
-отменить любые коммиты, созданные в этом состоянии, не затрагивая другие
-ветки, переключившись обратно на любую ветку.
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-Если хотите создать новую ветку для сохранения созданных коммитов, можете
-сделать это (сейчас или позже), используя команду switch с параметром -c.
-Например:
+option(BUILD_EXAMPLES "Build examples" OFF)
 
-  git switch -c <новая-ветка>
+project(print)
 
-Или отмените эту операцию с помощью:
+set(PRINT_VERSION_MAJOR 0)
+set(PRINT_VERSION_MINOR 1)
+set(PRINT_VERSION_PATCH 0)
+set(PRINT_VERSION_TWEAK 0)
+set(PRINT_VERSION
+  ${PRINT_VERSION_MAJOR}.${PRINT_VERSION_MINOR}.${PRINT_VERSION_PATCH}.${PRINT_VERSION_TWEAK})
+set(PRINT_VERSION_STRING "v${PRINT_VERSION}")
 
-  git switch -
-
-Отключите этот совет, установив переменную конфигурации
-advice.detachedHead в значение false
-
-HEAD сейчас на b514bdc8 Update version strings to 1.15.2 (#4583)
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05/third-party/gtest$ cd ../..
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ git add third-party/gtest
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ git commit -m "added gtest v1.15.2"
-[main 2d03fe7] added gtest v1.15.2
- 2 files changed, 4 insertions(+)
- create mode 100644 .gitmodules
- create mode 160000 third-party/gtest
+add_library(print STATIC ${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
 ```
 
-## 3. Был добавлен кусок кода к CMake.txt
+## 3. Были созданы файлы DESCRIPTION и ChangeLog.md
 ```bash
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ cat >> CMakeLists.txt <<'EOF'
-> if(BUILD_TESTS)
->   enable_testing()
->   add_subdirectory(third-party/gtest)
->   file(GLOB ${PROJECT_NAME}_TEST_SOURCES tests/*.cpp)
->   add_executable(check ${${PROJECT_NAME}_TEST_SOURCES})
->   target_link_libraries(check ${PROJECT_NAME} gtest_main)
->   add_test(NAME check COMMAND check)
-> endif()
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ echo "lab library" > DESCRIPTION
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ cat > ChangeLog.md <<'EOF'
+> * Sun May 17 2026 EighthBroom3439 <vladimir.deobald@gmail.com> 0.1.0.0
+> - Initial RPM release
 > EOF
 ```
 
-## 4. Был написан тест
+## 4. Был создан файл CPackConfig.cmake
 ```bash
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ mkdir -p tests
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ cat > tests/test1.cpp <<'EOF'
-> #include <print.hpp>
-> #include <gtest/gtest.h>
-> #include <fstream>
-> #include <string>
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ cat > CPackConfig.cmake <<'EOF'
+> include(InstallRequiredSystemLibraries)
+> set(CPACK_PACKAGE_CONTACT vladimir.deobald@gmail.com)
+> set(CPACK_PACKAGE_VERSION_MAJOR ${PRINT_VERSION_MAJOR})
+> set(CPACK_PACKAGE_VERSION_MINOR ${PRINT_VERSION_MINOR})
+> set(CPACK_PACKAGE_VERSION_PATCH ${PRINT_VERSION_PATCH})
+> set(CPACK_PACKAGE_VERSION_TWEAK ${PRINT_VERSION_TWEAK})
+> set(CPACK_PACKAGE_VERSION ${PRINT_VERSION})
+> set(CPACK_PACKAGE_DESCRIPTION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/DESCRIPTION)
+> set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "static C++ library for printing")
 > 
-> TEST(Print, InFileStream)
-> {
->   std::string filepath = "file.txt";
->   std::string text = "hello";
->   std::ofstream out{filepath};
->   print(text, out);
->   out.close();
->   std::string result;
->   std::ifstream in{filepath};
->   in >> result;
->   EXPECT_EQ(result, text);
-> }
+> set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE)
+> set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_SOURCE_DIR}/README.md)
+> 
+> set(CPACK_RPM_PACKAGE_NAME "print-devel")
+> set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+> set(CPACK_RPM_PACKAGE_GROUP "print")
+> set(CPACK_RPM_CHANGELOG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/ChangeLog.md)
+> set(CPACK_RPM_PACKAGE_RELEASE 1)
+> 
+> set(CPACK_DEBIAN_PACKAGE_NAME "libprint-dev")
+> set(CPACK_DEBIAN_PACKAGE_PREDEPENDS "cmake >= 3.0")
+> set(CPACK_DEBIAN_PACKAGE_RELEASE 1)
+> 
+> include(CPack)
 > EOF
 ```
 
-## 5. Была произведена сборка с последующим запуском теста
+## 5. Все изменения были закоммичены
 ```bash
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ cmake -H. -B_build -DBUILD_TESTS=ON
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ git add .
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ git commit -m "added versions and CPack configuration"
+[main 261b493] added versions and CPack configuration
+ 4 files changed, 37 insertions(+)
+ create mode 100644 CPackConfig.cmake
+ create mode 100644 ChangeLog.md
+ create mode 100644 DESCRIPTION
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ git tag v0.1.0.0
+```
+
+## 6. Была произведена сборка CMake двумя способами
+Первый способ:
+```bash
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ cmake -H. -B_build
 CMake Deprecation Warning at CMakeLists.txt:1 (cmake_minimum_required):
   Compatibility with CMake < 3.10 will be removed from a future version of
   CMake.
@@ -112,73 +106,57 @@ CMake Deprecation Warning at CMakeLists.txt:1 (cmake_minimum_required):
   to work with policies introduced by <max> or earlier.
 
 
--- The C compiler identification is GNU 14.2.0
--- The CXX compiler identification is GNU 14.2.0
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working C compiler: /usr/bin/cc - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: /usr/bin/c++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
--- Found Threads: TRUE
--- Configuring done (3.6s)
+-- Configuring done (0.0s)
 -- Generating done (0.0s)
--- Build files have been written to: /home/vdeo/EighthBroom3439/workspace/projects/lab05/_build
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ cmake --build _build
-[  8%] Building CXX object CMakeFiles/print.dir/sources/print.cpp.o
-[ 16%] Linking CXX static library libprint.a
-[ 16%] Built target print
-[ 25%] Building CXX object third-party/gtest/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o
-[ 33%] Linking CXX static library ../../../lib/libgtest.a
-[ 33%] Built target gtest
-[ 41%] Building CXX object third-party/gtest/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o
-[ 50%] Linking CXX static library ../../../lib/libgtest_main.a
-[ 50%] Built target gtest_main
-[ 58%] Building CXX object CMakeFiles/check.dir/tests/test1.cpp.o
-[ 66%] Linking CXX executable check
-[ 66%] Built target check
-[ 75%] Building CXX object third-party/gtest/googlemock/CMakeFiles/gmock.dir/src/gmock-all.cc.o
-[ 83%] Linking CXX static library ../../../lib/libgmock.a
-[ 83%] Built target gmock
-[ 91%] Building CXX object third-party/gtest/googlemock/CMakeFiles/gmock_main.dir/src/gmock_main.cc.o
-[100%] Linking CXX static library ../../../lib/libgmock_main.a
-[100%] Built target gmock_main
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ cmake --build _build --target test
-Running tests...
-Test project /home/vdeo/EighthBroom3439/workspace/projects/lab05/_build
-    Start 1: check
-1/1 Test #1: check ............................   Passed    0.00 sec
-
-100% tests passed, 0 tests failed out of 1
-
-Total Test time (real) =   0.04 sec
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ 
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ ./_build/check
-Running main() from /home/vdeo/EighthBroom3439/workspace/projects/lab05/third-party/gtest/googletest/src/gtest_main.cc
-[==========] Running 1 test from 1 test suite.
-[----------] Global test environment set-up.
-[----------] 1 test from Print
-[ RUN      ] Print.InFileStream
-[       OK ] Print.InFileStream (0 ms)
-[----------] 1 test from Print (0 ms total)
-
-[----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (0 ms total)
-[  PASSED  ] 1 test.
+-- Build files have been written to: /home/vdeo/EighthBroom3439/workspace/projects/lab06/_build
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ cmake --build _build
+[ 50%] Building CXX object CMakeFiles/print.dir/sources/print.cpp.o
+[100%] Linking CXX static library libprint.a
+[100%] Built target print
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ cd _build
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06/_build$ cpack -G "TGZ"
+CPack: Create package using TGZ
+CPack: Install projects
+CPack: - Run preinstall target for: print
+CPack: - Install project: print []
+CPack: Create package
+CPack: - package: /home/vdeo/EighthBroom3439/workspace/projects/lab06/_build/print-0.1.0.0-Linux.tar.gz generated.
 ```
 
-## 6. К ci.yml был добавлен кусок кода
+Второй способ:
 ```bash
-vdeo@deo:~/EighthBroom3439/workspace/projects/lab05$ cat >> .github/workflows/ci.yml <<'EOF'
-> 
->     -name: Run tests
->      run: cmake --build _build --target test -- ARGS=--verbose
-> EOF
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ cmake -H. -B_build -DCPACK_GENERATOR="TGZ"
+CMake Deprecation Warning at CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
 
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/vdeo/EighthBroom3439/workspace/projects/lab06/_build
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ cmake --build _build --target package
+[100%] Built target print
+Run CPack packaging tool...
+CPack: Create package using TGZ
+CPack: Install projects
+CPack: - Run preinstall target for: print
+CPack: - Install project: print []
+CPack: Create package
+CPack: - package: /home/vdeo/EighthBroom3439/workspace/projects/lab06/_build/print-0.1.0.0-Linux.tar.gz generated.
+```
+Оба способа сгенерировали архив print-0.1.0.0-Linux.tar.gz
+
+## 7. Данный архив был перемещен в папку artifacts
+```bash
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ mkdir -p artifacts
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ mv _build/*.tar.gz artifacts/
+vdeo@deo:~/EighthBroom3439/workspace/projects/lab06$ tree artifacts
+artifacts
+└── print-0.1.0.0-Linux.tar.gz
+
+1 directory, 1 file
 ```
